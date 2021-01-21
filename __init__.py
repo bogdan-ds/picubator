@@ -23,6 +23,7 @@ if __name__ == '__main__':
         heating.operate_within_thresholds(temperature)
 
         fan = RelayDevice(config.FAN['pin'])
-        fan.operate_periodically(config.FAN['periodic_interval_hours'],
-                                 config.FAN['duration_min'],
-                                 last_activated)
+        last_activated = fan.operate_periodically(
+            config.FAN['periodic_interval_hours'],
+            config.FAN['duration_min'],
+            last_activated)

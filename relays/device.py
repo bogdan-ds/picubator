@@ -38,6 +38,7 @@ class RelayDevice:
             duration = datetime.timedelta(minutes=duration)
             if now - last_activated > duration:
                 return self.set_relay_off()
+        return last_activated
 
     def is_relay_on(self):
         state = GPIO.input(self.pin_number)
