@@ -49,3 +49,5 @@ log_conf = {
     }
 }
 
+SHEETS_CREDENTIAL_PATH = 'client_secret.json'
+SPREADSHEET_ID = '1_rF4gtMxrIjKjUxc9P5_oq0cTQ6NBOLV6QZWNF24ehY'
