@@ -1,7 +1,7 @@
 from time import sleep
 import datetime
 
-from sensor.dht import DHTSensor
+from sensor.dht import DHT
 from relays.device import RelayDevice
 from sensor.google_sheets_writer import GoogleSheetsWriter
 
@@ -15,12 +15,14 @@ if __name__ == '__main__':
                                        config.SPREADSHEET_ID)
     while True:
         sleep(5)
-        dht_sensor = DHTSensor()
+        dht_sensor = DHT()
         humidity, temperature = dht_sensor.read_data()
-        if now + datetime.timedelta(minutes=30) > datetime.datetime.now():
-            now = datetime.datetime.now()
-            sheets_writer.write('Temperature', [now, temperature])
-            sheets_writer.write('Humidity', [now, humidifier])
+        sheet_value_dict = {
+            'Temperature': temperature,
+            'Humidity': humidity
+        }
+        dht_sensor.periodic_gsheets_write(now=now, interval_in_min=30,
+                                          sheet_value_dict=sheet_value_dict)
 
         humidifier = RelayDevice(config.HUMIDIFIER['pin'],
                                  config.HUMIDIFIER['lower_threshold'],

@@ -1,9 +1,10 @@
 import Adafruit_DHT
 
+from sensor.sensor_base import SensorBase
 import config
 
 
-class DHTSensor:
+class DHT(SensorBase):
 
     def __init__(self, sensor_type=None, sensor_pin=None):
         self.sensor_type = sensor_type if sensor_type else config.DHT_SENSOR
