@@ -1,7 +1,9 @@
 from time import sleep
 import datetime
+import smbus2
 
 from sensor.dht import DHT
+from sensor.bme280 import BME280
 from relays.device import RelayDevice
 from sensor.google_sheets_writer import GoogleSheetsWriter
 
@@ -13,6 +15,7 @@ if __name__ == '__main__':
     now = datetime.datetime.now()
     sheets_writer = GoogleSheetsWriter(config.SHEETS_CREDENTIAL_PATH,
                                        config.SPREADSHEET_ID)
+    smbus = smbus2.SMBus(config.BME280_PORT)
     while True:
         sleep(5)
         dht_sensor = DHT()
@@ -21,21 +24,18 @@ if __name__ == '__main__':
             'Temperature': temperature,
             'Humidity': humidity
         }
-        dht_sensor.periodic_gsheets_write(now=now, interval_in_min=30,
+        dht_sensor.periodic_gsheets_write(sheets_writer,
+                                          now=now,
+                                          interval_in_min=30,
                                           sheet_value_dict=sheet_value_dict)
+        bme280_sensor = BME280(smbus2, config.BME280_ADDRESS)
+        data = bme280_sensor.read_data()
+        sheet_value_dict = {
+            'Temperature': data.temperature,
+            'Humidity': data.humidity
+        }
+        bme280_sensor.periodic_gsheets_write(sheets_writer,
+                                             now=now,
+                                             interval_in_min=30,
+                                             sheet_value_dict=sheet_value_dict)
 
-        humidifier = RelayDevice(config.HUMIDIFIER['pin'],
-                                 config.HUMIDIFIER['lower_threshold'],
-                                 config.HUMIDIFIER['upper_threshold'])
-        humidifier.operate_within_thresholds(humidity)
-
-        heating = RelayDevice(config.HEATING['pin'],
-                              config.HEATING['lower_threshold'],
-                              config.HEATING['upper_threshold'])
-        heating.operate_within_thresholds(temperature)
-
-        fan = RelayDevice(config.FAN['pin'])
-        last_activated = fan.operate_periodically(
-            config.FAN['periodic_interval_hours'],
-            config.FAN['duration_min'],
-            last_activated)

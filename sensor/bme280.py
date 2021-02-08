@@ -1,15 +1,13 @@
 import bme280
-import smbus2
 
 from sensor.sensor_base import SensorBase
 
 
 class BME280(SensorBase):
 
-    def __init__(self, port, address):
-        self.port = port
-        self.bus = smbus2.SMBus(port)
+    def __init__(self, address, smbus):
         self.address = address
+        self.bus = smbus
         self.calibration_params = bme280.load_calibration_params(self.bus,
                                                                  self.address)
 

@@ -1,18 +1,13 @@
 import datetime
 
-import config
-from sensor.google_sheets_writer import GoogleSheetsWriter
-
 
 class SensorBase:
 
     def read_data(self):
         pass
 
-    def periodic_gsheets_write(self, now, interval_in_min, sheet_value_dict):
-        sheets_writer = GoogleSheetsWriter(config.SHEETS_CREDENTIAL_PATH,
-                                           config.SPREADSHEET_ID)
-
+    def periodic_gsheets_write(self, sheets_writer,
+                               now, interval_in_min, sheet_value_dict):
         if now + datetime.timedelta(
                 minutes=interval_in_min) < datetime.datetime.now():
             now = datetime.datetime.now()
