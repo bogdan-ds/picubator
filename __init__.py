@@ -24,18 +24,20 @@ if __name__ == '__main__':
             'Temperature': temperature,
             'Humidity': humidity
         }
-        dht_sensor.periodic_gsheets_write(sheets_writer,
-                                          now=now,
-                                          interval_in_min=30,
-                                          sheet_value_dict=sheet_value_dict)
-        bme280_sensor = BME280(smbus2, config.BME280_ADDRESS)
+        now = dht_sensor.periodic_gsheets_write(
+            sheets_writer,
+            now=now,
+            interval_in_min=30,
+            sheet_value_dict=sheet_value_dict)
+        bme280_sensor = BME280(config.BME280_ADDRESS, smbus)
         data = bme280_sensor.read_data()
         sheet_value_dict = {
             'Temperature': data.temperature,
             'Humidity': data.humidity
         }
-        bme280_sensor.periodic_gsheets_write(sheets_writer,
-                                             now=now,
-                                             interval_in_min=30,
-                                             sheet_value_dict=sheet_value_dict)
+        now = bme280_sensor.periodic_gsheets_write(
+            sheets_writer,
+            now=now,
+            interval_in_min=30,
+            sheet_value_dict=sheet_value_dict)
 
